@@ -4,6 +4,10 @@
  * 
  * Description: Examples of using the useful functions. Particuarly the
  * 			sorting and searching methods
+ *		Also, this uses matplotlibcpp. I didnt include it in this github
+ *			but if you want to run the test file, you need to download
+ *			this and put it in the same directory as this github project
+ *			matplotlibcc (git clone https://github.com/lava/matplotlib-cpp.git)
  *
  * Notes:
  *
@@ -19,6 +23,13 @@
 #include <memory>
 #include <iostream>
 #include <chrono>
+#include <math.h>
+#include <Waveform.h>
+#include <complex>
+
+#include "matplotlibcpp.h"
+
+namespace plt = matplotlibcpp;
 
 void splitTest(){
 	std::string test = "hello world how do you do";
@@ -195,8 +206,45 @@ void testIndividual(){
 	printArray(array);
 }
 
+void fftTest(){
+	int N = 512;
+	double Fs = 200;
+	std::vector<double> x(N,0);
+	std::vector<double> test(N,0);
+	std::vector<double> frequencies(N/2,0);
+	std::vector<std::complex<double>> sineSamples(N,0);
+	std::vector<double> y(N/2,0);
+	for(int i = 0; i < x.size(); i++){
+		x[i] = (1 / Fs) * i;
+		sineSamples[i] = cos(10*useful::PI*2 * x[i]) + cos(2*useful::PI*2 * x[i]);
+		test[i] = cos(10*useful::PI*2 * x[i]) + cos(2*useful::PI*2 * x[i]);
+	}
+
+	plt::figure_size(1200, 780);
+	plt::plot(x, test);
+	plt::show();
+
+	int peak1 = 0;
+	int peak2 = 0;
+	useful::fft(sineSamples);
+	for(int i = 0; i < y.size(); i++){
+		frequencies[i] = ((Fs / N) * i);
+		y[i] = std::abs(sineSamples[i]) / Fs;
+		
+	}
+
+	std::vector<double> prevelivantFrequencies = useful::getFrequencies(sineSamples,Fs,N);
+	for(double frequency : prevelivantFrequencies){
+		std::cout << "found frequency: " << frequency << std::endl;
+	}
+
+	plt::figure_size(1200, 780);
+	plt::plot(frequencies, y);
+	plt::show();
+}
+
 int main(int argc,char *argv[]){
-	testIndividual();
+	fftTest();
 
 	return 0;
 }

@@ -27,8 +27,9 @@ namespace useful{
 
 const double PI = 3.141592653589793238460;
 
-void fft(std::vector<std::complex<double>> &array, int samplingRate);
+void fft(std::vector<std::complex<double>> &array);
 void ifft(std::vector<std::complex<double>> &array, int samplingRate);
+std::vector<double> getFrequencies(std::vector<std::complex<double>> &sineSamples,double Fs,int N,double accuracy = 1);
 
 };
 
